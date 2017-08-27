@@ -892,6 +892,7 @@ ImgOutlierDetection<typename FILTERSTATE::mtState>,false>{
   void commonPostProcess(mtFilterState& filterState, const mtMeas& meas){
     typename mtFilterState::mtState& state = filterState.state_;
     MXD& cov = filterState.cov_;
+    int& activeCamCounter = filterState.state_.aux().activeCameraCounter_;
 
     // Actualize camera extrinsics
     state.updateMultiCameraExtrinsics(mpMultiCamera_);
@@ -935,13 +936,22 @@ ImgOutlierDetection<typename FILTERSTATE::mtState>,false>{
       }
     }
 
+    if(countTracked <= 2){
+      std::cout << "Too few features tracked, hard resetting linear velocity estimate" << std::endl;
+      state.MvM() = V3D(0,0,0);
+      filterState.resetVelocityCovariance();
+    }
+
     // Remove bad feature.
     float averageScore = filterState.fsm_.getAverageScore(); // TODO: make the following dependent on the ST-score
     if(verbose_) std::cout << "Removing features: ";
     for(unsigned int i=0;i<mtState::nMax_;i++){
+
       if(filterState.fsm_.isValid_[i]){
         FeatureManager<mtState::nLevels_,mtState::patchSize_,mtState::nCam_>& f = filterState.fsm_.features_[i];
-        if(!f.mpStatistics_->isGoodFeature(trackingUpperBound_,trackingLowerBound_)){
+        const int camID = f.mpCoordinates_->camID_;
+        const int activeCamID = (activeCamCounter + camID)%mtState::nCam_;
+        if(!f.mpStatistics_->isGoodFeature(trackingUpperBound_,trackingLowerBound_ || (f.mpStatistics_->status_[activeCamID] == FAILED_TRACKING) || (f.mpStatistics_->status_[activeCamID] == NOT_IN_FRAME))){
           if(verbose_) std::cout << filterState.fsm_.features_[i].idx_ << ", ";
           filterState.fsm_.isValid_[i] = false;
           filterState.resetFeatureCovariance(i,Eigen::Matrix3d::Identity());

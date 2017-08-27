@@ -613,6 +613,10 @@ class FilterState: public LWF::FilterState<State<nMax,nLevels,patchSize,nCam,nPo
     cov_.template block<2,2>(mtState::template getId<mtState::_fea>(i),mtState::template getId<mtState::_fea>(i)) = initCov.block<2,2>(1,1);
   }
 
+  void resetVelocityCovariance(){
+    cov_.template block<3,3>(3,3) = Eigen::Matrix3d::Identity();
+  }
+
   /** \brief Get the median distance parameter values of the state features for each camera.
    *
    *  \note The distance parameter type depends on the set \ref DepthType.
