@@ -939,8 +939,9 @@ ImgOutlierDetection<typename FILTERSTATE::mtState>,false>{
     if(countTracked <= 2){
       std::cout << "Too few features tracked, hard resetting linear velocity estimate" << std::endl;
       state.MvM() = V3D(0,0,0);
-      state.acb() = V3D(0,0,0);
+      state.acb() *= 0.9;
       filterState.resetVelocityCovariance();
+      filterState.increaseAccBiasCovariance();
     }
 
     // Remove bad feature.
