@@ -941,7 +941,7 @@ ImgOutlierDetection<typename FILTERSTATE::mtState>,false>{
       state.MvM() = V3D(0,0,0);
       state.acb() *= 0.9;
       filterState.resetVelocityCovariance();
-      filterState.increaseAccBiasCovariance();
+      filterState.resetAccBiasCovariance();
     }
 
     // Remove bad feature.

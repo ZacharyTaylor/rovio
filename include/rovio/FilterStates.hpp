@@ -617,8 +617,8 @@ class FilterState: public LWF::FilterState<State<nMax,nLevels,patchSize,nCam,nPo
     cov_.template block<3,3>(3,3) = Eigen::Matrix3d::Identity();
   }
 
-  void increaseAccBiasCovariance(){
-    cov_.template block<3,3>(6,6) *= 1.1;
+  void resetAccBiasCovariance(){
+    cov_.template block<3,3>(6,6) = 0.01*Eigen::Matrix3d::Identity();
   }
 
   /** \brief Get the median distance parameter values of the state features for each camera.

@@ -205,12 +205,12 @@ class RovioNode{
     gotFirstMessages_ = false;
 
     // Subscribe topics
-    subImu_ = nh_.subscribe("imu0", 10, &RovioNode::imuCallback,this);
+    subImu_ = nh_.subscribe("imu0", 20, &RovioNode::imuCallback,this);
     subImg0_ = nh_.subscribe("cam0/image_raw", 1, &RovioNode::imgCallback0,this);
     subImg1_ = nh_.subscribe("cam1/image_raw", 1, &RovioNode::imgCallback1,this);
-    subGroundtruth_ = nh_.subscribe("pose", 10, &RovioNode::groundtruthCallback,this);
-    subGroundtruthOdometry_ = nh_.subscribe("odometry", 10, &RovioNode::groundtruthOdometryCallback, this);
-    subVelocity_ = nh_.subscribe("abss/twist", 10, &RovioNode::velocityCallback,this);
+    subGroundtruth_ = nh_.subscribe("pose", 20, &RovioNode::groundtruthCallback,this);
+    subGroundtruthOdometry_ = nh_.subscribe("odometry", 20, &RovioNode::groundtruthOdometryCallback, this);
+    subVelocity_ = nh_.subscribe("abss/twist", 20, &RovioNode::velocityCallback,this);
 
     // Initialize ROS service servers.
     srvResetFilter_ = nh_.advertiseService("rovio/reset", &RovioNode::resetServiceCallback, this);
